@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoFit External Mock - API Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; padding: 24px; }
+        h1 { font-size: 1.5rem; margin-bottom: 8px; color: #00d4aa; }
+        .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 24px; }
+        .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-card { background: #16213e; border-radius: 8px; padding: 16px 24px; min-width: 140px; }
+        .stat-card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; margin-top: 4px; }
+        .stat-card .value.green { color: #00d4aa; }
+        .stat-card .value.red { color: #ff6b6b; }
+        .stat-card .value.blue { color: #4ecdc4; }
+        .toolbar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+        .toolbar button { background: #0f3460; border: none; color: #eee; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .toolbar button:hover { background: #1a4a7a; }
+        .toolbar button.danger { background: #c0392b; }
+        .toolbar button.danger:hover { background: #e74c3c; }
+        .auto-refresh { color: #888; font-size: 0.8rem; }
+        table { width: 100%; border-collapse: collapse; background: #16213e; border-radius: 8px; overflow: hidden; }
+        th { background: #0f3460; padding: 12px 16px; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #888; }
+        td { padding: 10px 16px; border-bottom: 1px solid #1a1a2e; font-size: 0.85rem; }
+        tr:last-child td { border-bottom: none; }
+        .method { font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; }
+        .method.GET { background: #2ecc71; color: #000; }
+        .method.POST { background: #3498db; color: #fff; }
+        .status-2xx { color: #00d4aa; font-weight: 700; }
+        .status-4xx { color: #f39c12; font-weight: 700; }
+        .status-5xx { color: #ff6b6b; font-weight: 700; }
+        .empty { text-align: center; padding: 48px; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>SoFit External Mock Dashboard</h1>
+    <p class="subtitle">API 호출 로그 (최근 100건)</p>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Total</div>
+            <div class="value blue" id="total">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Success (2xx)</div>
+            <div class="value green" id="success">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Client Error (4xx)</div>
+            <div class="value red" id="clientError">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Server Error (5xx)</div>
+            <div class="value red" id="serverError">0</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="fetchLogs()">새로고침</button>
+        <button class="danger" onclick="clearLogs()">로그 초기화</button>
+        <span class="auto-refresh">5초마다 자동 갱신</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>시간</th>
+                <th>Method</th>
+                <th>URI</th>
+                <th>Status</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody id="logBody">
+            <tr><td colspan="5" class="empty">로그가 없습니다</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchLogs() {
+            try {
+                const res = await fetch('/api/logs');
+                const logs = await res.json();
+                renderLogs(logs);
+                updateStats(logs);
+            } catch (e) {
+                console.error('Failed to fetch logs', e);
+            }
+        }
+
+        function renderLogs(logs) {
+            const tbody = document.getElementById('logBody');
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty">로그가 없습니다</td></tr>';
+                return;
+            }
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${formatTime(log.timestamp)}</td>
+                    <td><span class="method ${log.method}">${log.method}</span></td>
+                    <td>${log.uri}</td>
+                    <td><span class="${statusClass(log.status)}">${log.status}</span></td>
+                    <td>${log.durationMs}ms</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(logs) {
+            document.getElementById('total').textContent = logs.length;
+            document.getElementById('success').textContent = logs.filter(l => l.status >= 200 && l.status < 300).length;
+            document.getElementById('clientError').textContent = logs.filter(l => l.status >= 400 && l.status < 500).length;
+            document.getElementById('serverError').textContent = logs.filter(l => l.status >= 500).length;
+        }
+
+        function statusClass(status) {
+            if (status >= 500) return 'status-5xx';
+            if (status >= 400) return 'status-4xx';
+            return 'status-2xx';
+        }
+
+        function formatTime(ts) {
+            if (!ts) return '-';
+            const d = new Date(ts);
+            return d.toLocaleTimeString('ko-KR', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3, '0');
+        }
+
+        async function clearLogs() {
+            if (!confirm('로그를 초기화할까요?')) return;
+            await fetch('/api/logs', { method: 'DELETE' });
+            fetchLogs();
+        }
+
+        fetchLogs();
+        setInterval(fetchLogs, 5000);
+    </script>
+</body>
+</html>
