@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS ext_financial_cert (
 
 -- CB 신용조회 Mock 테이블
 CREATE TABLE IF NOT EXISTS ext_cb_result (
-    cb_id               BIGINT      NOT NULL AUTO_INCREMENT,
-    business_number     VARCHAR(20) NOT NULL,
-    representative_name VARCHAR(50) NOT NULL,
-    credit_score        INT         NOT NULL,
-    grade               VARCHAR(5)  NOT NULL,
-    evaluated_at        DATETIME,
+    cb_id           BIGINT      NOT NULL AUTO_INCREMENT,
+    name            VARCHAR(50) NOT NULL,
+    resident_number VARCHAR(7)  NOT NULL,
+    credit_score    INT         NOT NULL,
+    grade           VARCHAR(5)  NOT NULL,
+    evaluated_at    DATETIME,
     PRIMARY KEY (cb_id)
 );
