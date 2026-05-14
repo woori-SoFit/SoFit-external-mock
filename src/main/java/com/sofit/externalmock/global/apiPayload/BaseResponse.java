@@ -1,12 +1,14 @@
 package com.sofit.externalmock.global.apiPayload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class BaseResponse<T> {
-    private final boolean isSuccess;
+    @JsonProperty("isSuccess")
+    private final boolean success;
     private final String code;
     private final String message;
     private final T result;
