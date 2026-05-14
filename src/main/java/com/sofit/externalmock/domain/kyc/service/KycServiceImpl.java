@@ -25,9 +25,9 @@ public class KycServiceImpl implements KycService {
 
         KycVerifyResponse response = KycVerifyResponse.from(record);
 
-        // 폐업 사업자인 경우 isSuccess: false로 반환 (예외가 아닌 정상 응답, result는 포함)
+        // 폐업 사업자인 경우 isSuccess: true로 반환 (예외가 아닌 정상 응답, result는 포함)
         if (!record.getIsValid()) {
-            return new BaseResponse<>(false, "COMMON2000", "성공입니다.", response);
+            return new BaseResponse<>(true, "COMMON2000", "성공입니다.", response);
         }
 
         return BaseResponse.success(response);
