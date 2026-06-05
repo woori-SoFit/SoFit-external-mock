@@ -2,12 +2,14 @@ package com.sofit.externalmock.global.apiPayload;
 
 import com.sofit.externalmock.global.apiPayload.code.BaseErrorCode;
 import com.sofit.externalmock.global.apiPayload.code.GeneralErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -37,6 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+        log.error("Unhandled exception occurred", e);
         return ResponseEntity
                 .status(GeneralErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(ApiResponse.onFailure(GeneralErrorCode.INTERNAL_SERVER_ERROR));

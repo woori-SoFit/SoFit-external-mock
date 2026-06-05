@@ -1,6 +1,7 @@
 package com.sofit.externalmock.domain.financialcert.controller;
 
 import com.sofit.externalmock.domain.financialcert.dto.request.FinancialCertIdentityVerifyRequest;
+import com.sofit.externalmock.domain.financialcert.dto.request.FinancialCertLookupRequest;
 import com.sofit.externalmock.domain.financialcert.dto.request.FinancialCertVerifyRequest;
 import com.sofit.externalmock.domain.financialcert.dto.response.FinancialCertVerifyResponse;
 import com.sofit.externalmock.domain.financialcert.service.FinancialCertService;
@@ -32,5 +33,12 @@ public class FinancialCertController {
             @RequestBody @Valid FinancialCertIdentityVerifyRequest request
     ) {
         return ResponseEntity.ok(financialCertService.identityVerify(request));
+    }
+
+    @PostMapping("/lookup")
+    public ResponseEntity<ApiResponse<FinancialCertVerifyResponse>> lookup(
+            @RequestBody @Valid FinancialCertLookupRequest request
+    ) {
+        return ResponseEntity.ok(financialCertService.lookup(request));
     }
 }

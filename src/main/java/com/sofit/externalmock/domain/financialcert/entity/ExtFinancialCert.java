@@ -18,7 +18,7 @@ public class ExtFinancialCert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long certId;
 
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, length = 15, unique = true)
     private String phoneNumber;
 
     @Column(nullable = false, length = 255)

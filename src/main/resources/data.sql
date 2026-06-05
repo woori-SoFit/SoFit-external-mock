@@ -2,7 +2,7 @@
 -- ext_kyc_record Mock 데이터
 -- 정상 사업자 3건 + 폐업 사업자 1건
 -- =============================================
-INSERT INTO ext_kyc_record (
+INSERT IGNORE INTO ext_kyc_record (
     business_number,
     representative_name,
     business_category,
@@ -50,7 +50,7 @@ VALUES
 -- VALID 2건 + EXPIRED 1건 + REVOKED 1건
 -- pin_hash: BCrypt("123456") 해시값
 -- =============================================
-INSERT INTO ext_financial_cert (
+INSERT IGNORE INTO ext_financial_cert (
     phone_number,
     cert_number,
     holder_name,
@@ -97,7 +97,7 @@ INSERT INTO ext_financial_cert (
 -- ext_cb_result Mock 데이터
 -- 다양한 신용등급 3건
 -- =============================================
-INSERT INTO ext_cb_result (name, resident_number, credit_score, evaluated_at)
+INSERT IGNORE INTO ext_cb_result (name, resident_number, credit_score, evaluated_at)
 VALUES
     ('강민수', '9002141', 820, '2024-06-01 00:00:00'),
     ('이서아', '9506112', 780, '2024-06-01 00:00:00'),
