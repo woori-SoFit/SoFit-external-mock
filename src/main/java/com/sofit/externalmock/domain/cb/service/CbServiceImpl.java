@@ -5,8 +5,9 @@ import com.sofit.externalmock.domain.cb.dto.response.CbResultResponse;
 import com.sofit.externalmock.domain.cb.entity.ExtCbResult;
 import com.sofit.externalmock.domain.cb.exception.CbErrorCode;
 import com.sofit.externalmock.domain.cb.repository.ExtCbResultRepository;
+import com.sofit.externalmock.global.apiPayload.ApiResponse;
 import com.sofit.externalmock.global.apiPayload.BaseException;
-import com.sofit.externalmock.global.apiPayload.BaseResponse;
+import com.sofit.externalmock.global.apiPayload.code.GeneralSuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,11 @@ public class CbServiceImpl implements CbService {
     private final ExtCbResultRepository extCbResultRepository;
 
     @Override
-    public BaseResponse<CbResultResponse> inquiry(CbInquiryRequest request) {
+    public ApiResponse<CbResultResponse> inquiry(CbInquiryRequest request) {
         ExtCbResult result = extCbResultRepository.findByNameAndResidentNumber(
                         request.name(), request.residentNumber())
                 .orElseThrow(() -> new BaseException(CbErrorCode.CB_NOT_FOUND));
 
-        return BaseResponse.success(CbResultResponse.from(result));
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, CbResultResponse.from(result));
     }
 }
