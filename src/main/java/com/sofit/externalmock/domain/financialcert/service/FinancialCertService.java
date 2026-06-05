@@ -1,9 +1,12 @@
 package com.sofit.externalmock.domain.financialcert.service;
 
+import com.sofit.externalmock.domain.financialcert.dto.request.FinancialCertIdentityVerifyRequest;
 import com.sofit.externalmock.domain.financialcert.dto.request.FinancialCertVerifyRequest;
 import com.sofit.externalmock.domain.financialcert.dto.response.FinancialCertVerifyResponse;
-import com.sofit.externalmock.global.apiPayload.BaseResponse;
+import com.sofit.externalmock.global.apiPayload.ApiResponse;
 
 public interface FinancialCertService {
-    BaseResponse<FinancialCertVerifyResponse> verify(FinancialCertVerifyRequest request);
+    ApiResponse<FinancialCertVerifyResponse> verify(FinancialCertVerifyRequest request);
+
+    ApiResponse<Void> identityVerify(FinancialCertIdentityVerifyRequest request);
 }
