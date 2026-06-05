@@ -26,8 +26,5 @@ public class ExtCbResult {
     @Column(nullable = false)
     private Integer creditScore;
 
-    @Column(nullable = false, length = 5)
-    private String grade;
-
     private LocalDateTime evaluatedAt;
 }
